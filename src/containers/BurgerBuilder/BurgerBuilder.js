@@ -4,6 +4,12 @@ import Aux from '../../hoc/Auxiliary';
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 
+const INGREDIENT_PRICES = {
+    salad: 0.5,
+    cheese: 0.4,
+    meat: 1.3,
+    bacon: 0.7
+}
 class BurgerBuilder extends Component {
 
     // constructor(props) {
@@ -14,17 +20,54 @@ class BurgerBuilder extends Component {
     state = {
         ingredients: {
             salad: 0,
-            bacon: 1,
-            meat: 3,
-            cheese: 2
+            bacon: 0,
+            meat: 0,
+            cheese: 0
+        },
+        totalPrice: 4
+    }
+
+    addIngredientHandler = (type) => {
+        const oldIngredientCount = this.state.ingredients[type] + 1;
+        const updatedIngredients = {
+            ...this.state.ingredients
+        };
+        updatedIngredients[type] = oldIngredientCount;
+        const oldTotalPrice = this.state.totalPrice;
+        const updatedTotalPrice = oldTotalPrice + INGREDIENT_PRICES[type]
+        this.setState({ingredients: updatedIngredients, totalPrice: updatedTotalPrice});
+    }
+
+    removeIngredientHandler = (type) => {
+        const oldIngredientCount = this.state.ingredients[type];
+        if (oldIngredientCount <=0){
+            return
         }
+        const newIngredientCount = oldIngredientCount - 1;
+        const newIngredients = {
+            ...this.state.ingredients
+        }
+        newIngredients[type] = newIngredientCount;
+        const oldTotalPrice = this.state.totalPrice;
+        const updatedTotalPrice = oldTotalPrice + INGREDIENT_PRICES[type];
+        this.setState({ingredients: newIngredients, totalPrice: updatedTotalPrice});
     }
 
     render (){
+        const disabledInfo = {
+            ...this.state.ingredients
+        }
+        for (let key in disabledInfo) {
+            disabledInfo[key] = disabledInfo[key] <= 0;
+        }
         return (
             <Aux>
                 <Burger ingredients={this.state.ingredients}/>
-                <BuildControls />
+                <BuildControls 
+                added={this.addIngredientHandler}
+                removed={this.removeIngredientHandler}
+                disabled={disabledInfo}
+                price={this.state.totalPrice} />
             </Aux>
         );
     };
