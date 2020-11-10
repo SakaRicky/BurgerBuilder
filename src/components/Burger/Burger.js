@@ -13,10 +13,9 @@ const burger = (props) => {
     .reduce((acc, el) => {
         return acc.concat(el);
     }, []);
-    console.log(transformedIngredients);
 
     if (transformedIngredients.length === 0) {
-        transformedIngredients = <p>Please add ingredients</p>
+        transformedIngredients = <p className={classes.Paragraph}>Please add ingredients</p>;
     }
 
     return(
